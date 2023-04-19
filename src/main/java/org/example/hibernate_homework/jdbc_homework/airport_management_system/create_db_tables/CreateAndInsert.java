@@ -20,7 +20,7 @@ import java.util.Set;
 public class CreateAndInsert {
     private String url = "jdbc:postgresql://localhost:5432/JDBC";
     private String userName = "postgres";
-    private String passwd = "manukpoloz";
+    private String passwd = "******";
     Connection con;
     Statement st;
     Scanner sc;
