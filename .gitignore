@@ -4,5 +4,6 @@
 *.idea
 *.index
 *.jar
+persistence.xml
 .idea
 /target
