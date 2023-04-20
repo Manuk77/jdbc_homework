@@ -11,18 +11,22 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import static org.example.hibernate_homework.jdbc_homework.airport_management_system.create_db_tables.CreateAndInsert.connectToUrl;
+
 public class PassengerService implements Service<Passengers>, Passenger {
     Passengers passengers;
     Connection con;
     Statement st;
     PreparedStatement pst;
 
+
     @Override
     public Passengers getById(long id) {
+        con = connectToUrl();
         CreateAndInsert ci = new CreateAndInsert();
         passengers = new Passengers();
         if (validateId(id)) {
-            con = ci.getCon();
+            con = connectToUrl();
             try {
                 st = con.createStatement();
                 ResultSet rs = st.executeQuery("select * from Passengers where passenger_id = " + id);
@@ -33,7 +37,7 @@ public class PassengerService implements Service<Passengers>, Passenger {
                    passengers.setCountry(rs.getString("country"));
                    passengers.setCity(rs.getString("city"));
                 }
-                return passengers;
+
             }catch (SQLException e){
                 System.out.println(e.getMessage());
             }finally {
@@ -44,6 +48,7 @@ public class PassengerService implements Service<Passengers>, Passenger {
                     System.out.println(e.getMessage());
                 }
             }
+            return passengers;
         }
         throw new IllegalArgumentException("specified id must not be negative");
     }
@@ -51,6 +56,7 @@ public class PassengerService implements Service<Passengers>, Passenger {
 
     @Override
     public Set<Passengers> getAll() {
+        con = connectToUrl();
         Set<Passengers> passenger = new HashSet<>();
         try {
             st = con.createStatement();
@@ -73,6 +79,7 @@ public class PassengerService implements Service<Passengers>, Passenger {
     }
 
     public Set<Passengers> get(int offset, int perPage, String sort) {
+        con = connectToUrl();
         Set<Passengers> passenger = new HashSet<>();
         try{
             st = con.createStatement();
@@ -101,6 +108,7 @@ public class PassengerService implements Service<Passengers>, Passenger {
 
     @Override
     public void save(Passengers passengers) {
+        con = connectToUrl();
         if (isNotEmpty(passengers)){
             try {
                 st = con.createStatement();
@@ -130,6 +138,7 @@ public class PassengerService implements Service<Passengers>, Passenger {
 
     @Override
     public void update(Passengers passengers, long passenger_id) {
+        con = connectToUrl();
         if (isNotEmpty(passengers) && validateId(passenger_id)) {
             try {
                 st = con.createStatement();
@@ -153,12 +162,14 @@ public class PassengerService implements Service<Passengers>, Passenger {
                         System.out.println(e.getMessage());
                     }
             }
-
+            return;
         }
+        throw new IllegalArgumentException("specified object must not be empty ot null, or id must not be negative");
     }
 
     @Override
     public void delete(long id) {
+        con = connectToUrl();
         if (validateId(id)){
             try {
                 pst = con.prepareStatement("delete from Passengers where passenger_id = ?");
@@ -181,7 +192,7 @@ public class PassengerService implements Service<Passengers>, Passenger {
                         System.out.println(e.getMessage());
                     }
             }
-
+            return;
         }
         throw new IllegalArgumentException("specified id must not be negative");
     }

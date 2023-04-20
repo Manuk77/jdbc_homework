@@ -11,6 +11,8 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import static org.example.hibernate_homework.jdbc_homework.airport_management_system.create_db_tables.CreateAndInsert.connectToUrl;
+
 public class TripService implements Service<Trip>, TripI {
     Trip trip;
     Connection con;
@@ -19,10 +21,11 @@ public class TripService implements Service<Trip>, TripI {
 
     @Override
     public Trip getById(long id) {
+        con = connectToUrl();
         CreateAndInsert ci = new CreateAndInsert();
         trip = new Trip();
         if (validateId(id)) {
-            con = ci.getCon();
+            con = connectToUrl();
             try {
                 st = con.createStatement();
                 ResultSet rs = st.executeQuery("select * from Company where company_id = " + id);
@@ -35,7 +38,7 @@ public class TripService implements Service<Trip>, TripI {
                     trip.setTimeOut(rs.getTimestamp("time_out"));
                     trip.setTimeIn(rs.getTimestamp("time_in"));
                 }
-                return trip;
+
             }catch (SQLException e){
                 System.out.println(e.getMessage());
             }finally {
@@ -47,12 +50,14 @@ public class TripService implements Service<Trip>, TripI {
                     System.out.println(e.getMessage());
                 }
             }
+            return trip;
         }
         throw new IllegalArgumentException("specified id must not be negative");
     }
 
     @Override
     public Set<Trip> getAll() {
+        con = connectToUrl();
         Set<Trip> trip = new HashSet<>();
         try {
             st = con.createStatement();
@@ -76,6 +81,7 @@ public class TripService implements Service<Trip>, TripI {
     }
 
     public Set<Trip> get(int offset, int perPage, String sort) {
+        con = connectToUrl();
         Set<Trip> trip = new HashSet<>();
         try{
             st = con.createStatement();
@@ -105,6 +111,7 @@ public class TripService implements Service<Trip>, TripI {
 
     @Override
     public void save(Trip trip) {
+        con = connectToUrl();
         if (isNotEmpty(trip)){
             try {
                 st = con.createStatement();
@@ -135,6 +142,7 @@ public class TripService implements Service<Trip>, TripI {
 
     @Override
     public void update(Trip trip, long trip_id) {
+        con = connectToUrl();
         if (isNotEmpty(trip) && validateId(trip_id)) {
             try {
                 st = con.createStatement();
@@ -167,6 +175,7 @@ public class TripService implements Service<Trip>, TripI {
 
     @Override
     public void delete(long id) {
+        con = connectToUrl();
         if (validateId(id)){
             try {
                 pst = con.prepareStatement("delete from Trip where trip_id = ?");
@@ -189,13 +198,14 @@ public class TripService implements Service<Trip>, TripI {
                         System.out.println(e.getMessage());
                     }
             }
-
+            return;
         }
         throw new IllegalArgumentException("specified index must not be negative");
     }
 
     @Override
     public List<Trip> getTripsFrom(String city) {
+        con = connectToUrl();
         if (validString(city)) {
             List<Trip> trip = new ArrayList<>();
             try {
@@ -223,6 +233,7 @@ public class TripService implements Service<Trip>, TripI {
 
     @Override
     public List<Trip> getTripsTo(String city) {
+        con = connectToUrl();
         if (validString(city)) {
             List<Trip> trip = new ArrayList<>();
             try {

@@ -8,6 +8,8 @@ import java.sql.*;
 import java.util.HashSet;
 import java.util.Set;
 
+import static org.example.hibernate_homework.jdbc_homework.airport_management_system.create_db_tables.CreateAndInsert.connectToUrl;
+
 
 public class CompanyService implements Service<Company>{
     Company company;
@@ -16,23 +18,23 @@ public class CompanyService implements Service<Company>{
     PreparedStatement pst;
     @Override
     public Company getById(long id) {
+        con = connectToUrl();
         CreateAndInsert ci = new CreateAndInsert();
         company = new Company();
         if (validateId(id)) {
-            con = ci.getCon();
+            con = connectToUrl();
            try {
                st = con.createStatement();
                ResultSet rs = st.executeQuery("select * from Company where company_id = " + id);
                while (rs.next()) {
                     company.setCompany_id(rs.getLong("company_id"));
-                    company.setName(rs.getString("namee"));
+                    company.setName(rs.getString("company_name"));
                     company.setFoundDate(rs.getDate("found_date"));
                }
-               return company;
+
            }catch (SQLException e){
                System.out.println(e.getMessage());
            }finally {
-               company = null;
                try {
                    if (st != null)
                        st.close();
@@ -40,18 +42,20 @@ public class CompanyService implements Service<Company>{
                    System.out.println(e.getMessage());
                }
            }
+            return company;
         }
         throw new IllegalArgumentException("specified id must not be negative");
     }
 
     @Override
     public Set<Company> getAll() {
+        con = connectToUrl();
         Set<Company> comp = new HashSet<>();
         try {
             st = con.createStatement();
             ResultSet rs = st.executeQuery("select * from company");
             while (rs.next()) {
-                comp.add(new Company(rs.getLong("company_id"), rs.getString("namee"),
+                comp.add(new Company(rs.getLong("company_id"), rs.getString("company_name"),
                         rs.getDate("found_date")));
             }
         }catch (SQLException e) {
@@ -69,6 +73,7 @@ public class CompanyService implements Service<Company>{
 
     @Override
     public Set<Company> get(int offset, int perPage, String sort) {
+        con = connectToUrl();
         Set<Company> comp = new HashSet<>();
         try{
             st = con.createStatement();
@@ -77,7 +82,7 @@ public class CompanyService implements Service<Company>{
             pst.setInt(2, offset);
             ResultSet rs = pst.executeQuery();
             while (rs.next()) {
-                comp.add(new Company(rs.getLong("company_id"), rs.getString("namee"),
+                comp.add(new Company(rs.getLong("company_id"), rs.getString("company_name"),
                         rs.getDate("found_date")));
             }
         }catch (SQLException e) {
@@ -97,6 +102,7 @@ public class CompanyService implements Service<Company>{
 
     @Override
     public void save(Company company) {
+        con = connectToUrl();
         if (isNotEmpty(company)){
             try {
                 st = con.createStatement();
@@ -122,6 +128,7 @@ public class CompanyService implements Service<Company>{
 
     @Override
     public void update(Company company, long company_id) {
+        con = connectToUrl();
         if (isNotEmpty(company) && validateId(company_id)) {
             try {
                 st = con.createStatement();
@@ -148,6 +155,7 @@ public class CompanyService implements Service<Company>{
 
     @Override
     public void delete(long id) {
+        con = connectToUrl();
         if (validateId(id)){
             try {
                 pst = con.prepareStatement("select count(company_id) from trip where company_id = ?");
@@ -180,8 +188,9 @@ public class CompanyService implements Service<Company>{
                         System.out.println(e.getMessage());
                     }
             }
-
+            return;
         }
+        throw new IllegalArgumentException("Specified id must not be negative");
     }
 
     private boolean validateId(long id){
