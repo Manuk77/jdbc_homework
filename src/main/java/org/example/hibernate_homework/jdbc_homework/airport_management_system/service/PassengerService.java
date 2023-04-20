@@ -83,9 +83,10 @@ public class PassengerService implements Service<Passengers>, Passenger {
         Set<Passengers> passenger = new HashSet<>();
         try{
             st = con.createStatement();
-            pst = con.prepareStatement("select * from Passengers order by " + sort + "limit ?  offset ?");
-            pst.setInt(1, perPage);
-            pst.setInt(2, offset);
+            pst = con.prepareStatement("select * from Passengers order by ? limit ?  offset ?");
+            pst.setString(1, sort);
+            pst.setInt(2, perPage);
+            pst.setInt(3, offset);
             ResultSet rs = pst.executeQuery();
             while (rs.next()) {
                 passenger.add(new Passengers(rs.getLong("passenger_id"), rs.getString("namee"),

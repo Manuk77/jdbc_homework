@@ -77,9 +77,10 @@ public class CompanyService implements Service<Company>{
         Set<Company> comp = new HashSet<>();
         try{
             st = con.createStatement();
-            pst = con.prepareStatement("select * from Company order by " + sort + "limit ?  offset ?");
-            pst.setInt(1, perPage);
-            pst.setInt(2, offset);
+            pst = con.prepareStatement("select * from Company order by ? limit ?  offset ?");
+            pst.setString(1, sort);
+            pst.setInt(2, perPage);
+            pst.setInt(3, offset);
             ResultSet rs = pst.executeQuery();
             while (rs.next()) {
                 comp.add(new Company(rs.getLong("company_id"), rs.getString("company_name"),
