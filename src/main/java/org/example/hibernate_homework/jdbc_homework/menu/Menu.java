@@ -66,8 +66,8 @@ public class Menu {
                 Scanner scStr = new Scanner(System.in);
                 if (update == 1){
                     System.out.print("Enter The date m/d/yyyy -> ");
-                    Date date = new Date(scInt.nextLong());
-                    System.out.println("Enter the airplane name");
+                    Date date = Date.valueOf(scStr.nextLine());
+                    System.out.print("Enter the airplane name -> ");
                     String airplane = scStr.nextLine();
                     Company comp = new Company(0,airplane,date);
                     CompanyService companyService = new CompanyService();
@@ -83,10 +83,11 @@ public class Menu {
                     String country = scStr.nextLine();
                     System.out.print("Enter city -> ");
                     String city = scStr.nextLine();
-                    Passengers pass = new Passengers(0, name, phone, country, city);
+                    Passengers pass = new Passengers(10, name, phone, country, city);
                     PassengerService passengerService = new PassengerService();
                     System.out.print("Enter id for searching -> ");
-                    passengerService.update(pass, scInt.nextLong());
+                    long id = scInt.nextLong();
+                    passengerService.update(pass, id);
                 }
                 else{
                     System.out.print("Enter airplane -> ");
@@ -95,11 +96,11 @@ public class Menu {
                     String townFrom = scStr.nextLine();
                     System.out.print("Enter town to -> ");
                     String townTo = scStr.nextLine();
-                    System.out.print("Enter time out yyyy-mm-dd ->");
-                    Timestamp timeOut = new Timestamp(scInt.nextLong());
-                    System.out.print("Enter time in yyyy-mm-dd ->");
-                    Timestamp timeIn = new Timestamp(scInt.nextLong());
-                    Trip trip = new Trip(0, 0, airplane, townFrom, townTo, timeOut, timeIn);
+                    System.out.print("Enter time out yyyy-mm-dd hh:mm:ss -> ");
+                    Timestamp timeOut =  Timestamp.valueOf(scStr.nextLine());
+                    System.out.print("Enter time in yyyy-mm-dd hh:mm:ss -> ");
+                    Timestamp timeIn = Timestamp.valueOf(scStr.nextLine());
+                    Trip trip = new Trip(10, 10, airplane, townFrom, townTo, timeOut, timeIn);
                     TripService tripService = new TripService();
                     System.out.print("Enter id for searching -> ");
                     tripService.update(trip, scInt.nextLong());
