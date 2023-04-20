@@ -8,7 +8,7 @@ import static org.example.hibernate_homework.jdbc_homework.menu.Menu.*;
 public class Main {
     public static void main(String[] args) {
 
-        CreateAndInsert cri = new CreateAndInsert();
+        CreateAndInsert cri = CreateAndInsert.createAndInsertSingle();
         Scanner scInt = new Scanner(System.in);
         int choice = 0;
 
