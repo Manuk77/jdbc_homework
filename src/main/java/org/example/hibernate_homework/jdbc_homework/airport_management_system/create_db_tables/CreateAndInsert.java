@@ -319,10 +319,10 @@ public class CreateAndInsert {
         } else if (choice == 3) {
             System.out.print("enter offset -> ");
             int offset = sc.nextInt();
-            System.out.println("enter perPage -> ");
+            System.out.print("enter perPage -> ");
             int perPage = sc.nextInt();
             System.out.print("enter sort -> ");
-            String sort = scStr.toString();
+            String sort = scStr.nextLine();
             comp = compService.get(offset, perPage, sort);
         }
         return comp;
@@ -367,10 +367,10 @@ public class CreateAndInsert {
         } else if (choice == 3) {
             System.out.print("enter offset -> ");
             int offset = sc.nextInt();
-            System.out.println("enter perPage -> ");
+            System.out.print("enter perPage -> ");
             int perPage = sc.nextInt();
             System.out.print("enter sort -> ");
-            String sort = scStr.toString();
+            String sort = scStr.nextLine();
             trip = tripService.get(offset, perPage, sort);
         }
         return trip;
