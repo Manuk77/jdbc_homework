@@ -7,6 +7,10 @@ import org.example.hibernate_homework.jdbc_homework.airport_management_system.se
 import org.example.hibernate_homework.jdbc_homework.airport_management_system.service.PassengerService;
 import org.example.hibernate_homework.jdbc_homework.airport_management_system.service.TripService;
 
+import java.io.BufferedReader;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.IOException;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
@@ -18,24 +22,38 @@ import java.util.Set;
 
 
 public class CreateAndInsert {
-    private String url = "jdbc:postgresql://localhost:5432/JDBC";
-    private String userName = "postgres";
-    private String passwd = "******";
-    Connection con;
+    private static String url = "jdbc:postgresql://localhost:5432/JDBC";
+    private static String userName = "postgres";
+    private static String passwd = "manukpoloz2000";
+    private static CreateAndInsert createAndInsert;
+    static Connection con;
     Statement st;
     Scanner sc;
+    BufferedReader bufferedReader;
     CompanyService compService;
     TripService tripService;
     PassengerService passService;
 
-    public void connectToUrl() {
+    public static Connection connectToUrl() {
         try {
             if (con == null)
-                con = DriverManager.getConnection(url, userName,passwd);
+                return con =  DriverManager.getConnection(url, userName,passwd);
         }catch (SQLException e) {
             System.out.println(e.getMessage());
         }
-
+        return con;
+    }
+    private void bufferReader(String path) {
+            try {
+                bufferedReader = new BufferedReader(new FileReader(path));
+            }catch (FileNotFoundException e) {
+                System.out.println(e.getMessage());
+            }
+    }
+    public static CreateAndInsert createAndInsertSingle() {
+        if (createAndInsert == null)
+            return new CreateAndInsert();
+        return createAndInsert;
     }
 
     public void closeConnection() {
@@ -45,33 +63,38 @@ public class CreateAndInsert {
 
     private void insertCompany(String filePath){
         if (validString(filePath)) {
-            connection();
+            con = connectToUrl();
             createStatement();
-            sc = new Scanner(filePath);
+            bufferReader(filePath);
             String[] comp;
             try {
-
-                while (sc.hasNext()) {
-                    StringBuilder sb = new StringBuilder("insert ino Company(namee, found_date) values (");
-                    comp = sc.nextLine().split(",");
-                    sb.append("'").append(comp[0] + "','").append(comp[1] + "');");
+                int i = 1;
+                String line;
+                while ((line = bufferedReader.readLine()) != null) {
+                    StringBuilder sb = new StringBuilder("insert into Company(company_id, company_name, found_date) values (");
+                    comp = line.split(",");
+                    sb.append(i).append(",'").append(comp[0] + "','").append(comp[1] + "');");
                     st.executeUpdate(sb.toString());
                     sb.setLength(0);
-
+                    ++i;
                 }
 
-            }catch (SQLException e ){
+            }catch (SQLException  | IOException e){
                 System.out.println(e.getMessage());
             }finally {
-                sc.close();
                 if (st != null)
                     try {
                         st.close();
                     }catch (SQLException e){
                         System.out.println(e.getMessage());
+                        try {
+                            bufferedReader.close();
+                        }catch (IOException x) {
+                            System.out.println(x.getMessage());
+                        }
                     }
-
             }
+            return;
         }
         throw new IllegalArgumentException("filePath must not be null or empty");
 
@@ -80,29 +103,37 @@ public class CreateAndInsert {
     private void insertPassengers(String filePath){
         if (validString(filePath)) {
             createStatement();
-            sc = new Scanner(filePath);
+            bufferReader(filePath);
             String[] passenger;
             Random random = new Random();
+            String line;
             try {
-                while (sc.hasNext()){
-                    int i = 1;
+                int i = 1;
+                while ((line = bufferedReader.readLine()) != null){
                     StringBuilder sb = new StringBuilder("insert into Passengers(passenger_id, namee, phone, country, city) values (");
-                    passenger = sc.nextLine().split(",");
-                    sb.append((random.nextInt(37) + 1) + "'").append(passenger[0] +"','")
-                            .append(passenger[1]+"','" + passenger[2] +"'," + "'" + passenger[3] +"','" + passenger[4]+"');");
+                    passenger = line.split(",");
+                    sb.append((i) + ",'").append(passenger[0] +"','")
+                            .append(passenger[1]+"','" + passenger[2] +"'," + "'" + passenger[3] + "');");
                     st.executeUpdate(sb.toString());
+                    sb.setLength(0);
+                    ++i;
                 }
-            }catch (SQLException e){
+            }catch (SQLException | IOException e){
                 System.out.println(e.getMessage());
             }finally {
-                sc.close();
                 if (st != null)
                     try {
                         st.close();
                     }catch (SQLException e){
                         System.out.println(e.getMessage());
+                        try {
+                            bufferedReader.close();
+                        }catch (IOException x) {
+                            System.out.println(x.getMessage());
+                        }
                     }
             }
+            return;
         }
         throw new IllegalArgumentException("filepath must not be null or empty");
     }
@@ -110,59 +141,83 @@ public class CreateAndInsert {
     private void insertTrip(String filePath){
         if (validString(filePath)) {
             createStatement();
-            sc = new Scanner(filePath);
+            bufferReader(filePath);
             createStatement();
             StringBuilder sb = new StringBuilder("insert into Trip(trip_id, passenger_id," +
                     " company, town_from, town_to, time_out, time_in) values(");
             String[] trip;
+            String line;
             try{
-                while (sc.hasNext()){
+                while ((line = bufferedReader.readLine()) != null){
                     int i = 1;
-                       trip = sc.nextLine().split(",");
-                       sb.append(parserToInt(trip[0]) + "," + parserToInt(trip[1]) + ",'" + trip[2] +
-                               "','" + trip[3] + "','" + trip[4] +"','" + trip[5] + "','" + trip[6] + "');");
-                       st.executeUpdate(sb.toString());
+                    trip = line.split(",");
+                    sb.append(parserToInt(trip[0])).append( ",").append(parserToInt(trip[1])).append( ",'").append(trip[2])
+                            .append("','").append(trip[3]).append("','").append(trip[4]).append(",'").append(trip[5])
+                            .append("','").append(trip[6]).append("');");
+                    st.executeUpdate(sb.toString());
+                    System.out.println("trip-----------");
+                    System.out.println(sb.toString());
+                    sb.setLength(0);
+
                 }
-            }catch (SQLException e) {
+            }catch (SQLException | IOException e) {
                 System.out.println(e.getMessage());
             }finally {
-                sc.close();
                 if (st != null)
                     try {
                         st.close();
                     }catch (SQLException e){
                         System.out.println(e.getMessage());
+                        try {
+                            bufferedReader.close();
+                        }catch (IOException x) {
+                            System.out.println(x.getMessage());
+                        }
                     }
             }
+            return;
         }
+        throw new IllegalArgumentException("filepath must not be null or empty");
     }
 
     private void insertPassInTrip(String filePath) {
         if (validString(filePath)) {
             createStatement();
-            sc = new Scanner(filePath);
+            bufferReader(filePath);
             String[] passInT;
             StringBuilder sb = new StringBuilder("insert into Pass_in_trip(trip_id, passenger_id, datee, place) values(");
+            String line;
             try {
-                while (sc.hasNext()) {
-                    passInT = sc.nextLine().split(",");
+                while ((line = bufferedReader.readLine()) != null) {
+                    passInT = line.split(",");
                     sb.append(parserToInt(passInT[0]) + "," + parserToInt(passInT[1] + ",'" + passInT[2] + "','" +
                             passInT[3] + "');"));
                     st.executeUpdate(sb.toString());
+                    System.out.println("passinttrip-------------------");
+                    System.out.println(sb.toString());
+                    sb.setLength(0);
+
 
                 }
-            }catch (SQLException e) {
+            }catch (SQLException | IOException e) {
                 System.out.println(e.getMessage());
             }finally {
                 if (st != null)
                     try {
                         st.close();
-                    }catch (SQLException e) {
+                    }catch (SQLException e){
                         System.out.println(e.getMessage());
+                        try {
+                            bufferedReader.close();
+                        }catch (IOException x) {
+                            System.out.println(x.getMessage());
+                        }
                     }
             }
+            return;
 
         }
+        throw new IllegalArgumentException("filepath must not be null or empty");
     }
 
 
@@ -172,10 +227,10 @@ public class CreateAndInsert {
 
     private void createTableCompany() {
         final String comName =
-                "create table Company(company_name varchar(50) not null , found_date varchar(50) not null);";
+                "create table Company(company_id integer primary key , company_name varchar(50) not null, found_date date not null);";
 
         try{
-            connectToUrl();
+            con = connectToUrl();
             Statement st = con.createStatement();
             st.execute(comName);
 
@@ -205,7 +260,7 @@ public class CreateAndInsert {
     }
 
     private void createTableTrip() throws SQLException {
-        final String tripName = "create table Trip(trip_id integer primary key, passenger_id integer references Passengers(passenger_id)," +
+        final String tripName = "create table Trip(trip_id integer primary key, passenger_id integer not null ," +
                 " company varchar(50) not null, town_from varchar(50) not null ," +
                 " town_to varchar(50)not null, time_out date not null, time_in date not null );";
 
@@ -216,13 +271,12 @@ public class CreateAndInsert {
     }
 
     private void createTablePassInTrip() throws SQLException {
-        final String passInTrip = "create table Pass_in_trip(trip_id integer references Trip(trip_id), " +
-                "passenger_id integer references Passengers(passenger_id), datee date not null, place varchar(50) not null )";
+        final String passInTrip = "create table Pass_in_trip(trip_id integer not null , " +
+                "passenger_id integer not null , datee date not null, place varchar(50) not null )";
         Statement st = con.createStatement();
         st.execute(passInTrip);
 
         st.close();
-        con.close();
     }
 
     public void createAllTables(){
@@ -242,6 +296,7 @@ public class CreateAndInsert {
             insertPassengers(paths[1]);
             insertTrip(paths[2]);
             insertPassInTrip(paths[3]);
+            return;
         }
         throw new IllegalArgumentException("specified array of String must not be null or less or more than 4 elements");
 
@@ -289,10 +344,10 @@ public class CreateAndInsert {
         } else if (choice == 3) {
             System.out.print("enter offset -> ");
             int offset = sc.nextInt();
-            System.out.println("enter perPage -> ");
+            System.out.print("enter perPage -> ");
             int perPage = sc.nextInt();
             System.out.print("enter sort -> ");
-            String sort = scStr.toString();
+            String sort = scStr.nextLine();
             pass = passService.get(offset, perPage, sort);
         }
         return pass;
@@ -350,17 +405,21 @@ public class CreateAndInsert {
     }
 
     public void deleteFrom(int choice) {
+        sc = new Scanner(System.in);
         if (choice == 1) {
             System.out.print("Enter id for deleting -> ");
             long id = sc.nextLong();
+            compService = new CompanyService();
             compService.delete(id);
         }else if (choice == 2) {
             System.out.print("Enter id for deleting -> ");
             long id = sc.nextLong();
+            passService = new PassengerService();
             passService.delete(id);
         }else {
             System.out.println("Enter id for deleting -> ");
             long id = sc.nextLong();
+            tripService = new TripService();
             tripService.delete(id);
         }
     }
@@ -371,38 +430,38 @@ public class CreateAndInsert {
         System.out.println("1. Company getById(long id)");
         System.out.println("2. Set<Company> getAll()");
         System.out.println("3. Set<Company> get(int offset, int perPage, String sort)");
+        System.out.print("Enter your choice -> ");
     }
 
     private void menuPass() {
         System.out.println("1. Passenger getById(long id)");
         System.out.println("2. Set<Passenger> getAll()");
         System.out.println("3. Set<Passenger> get(int offset, int perPage, String sort)");
+        System.out.print("Enter your choice -> ");
     }
 
     private void menuTrip() {
         System.out.println("1. Trip getById(long id)");
         System.out.println("2.  Set<Trip> getAll()");
         System.out.println("3.  Set<Trip> get(int offset, int perPage, String sort)");
+        System.out.print("Enter your choice -> ");
     }
 
 
 
 
 
+//    private void connection(){
+//        try {
+//           con = DriverManager.getConnection(url, userName, passwd);
+//        }catch (SQLException e){
+//            System.out.println(e.getMessage());
+//        }
+//    }
 
-
-
-    private void connection(){
-        try {
-           con = DriverManager.getConnection(url, userName, passwd);
-        }catch (SQLException e){
-            System.out.println(e.getMessage());
-        }
-    }
-
-    public Connection getCon() {
-        return con;
-    }
+//    public Connection getCon() {
+//        return con;
+//    }
 
     private void createStatement(){
         try {
