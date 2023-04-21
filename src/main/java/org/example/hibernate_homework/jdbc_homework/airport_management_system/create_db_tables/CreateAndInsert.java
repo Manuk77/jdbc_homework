@@ -11,12 +11,8 @@ import java.io.BufferedReader;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.SQLException;
-import java.sql.Statement;
+import java.sql.*;
 import java.util.HashSet;
-import java.util.Random;
 import java.util.Scanner;
 import java.util.Set;
 
@@ -24,7 +20,7 @@ import java.util.Set;
 public class CreateAndInsert {
     private static String url = "jdbc:postgresql://localhost:5432/JDBC";
     private static String userName = "postgres";
-    private static String passwd = "********";
+    private static String passwd = "manukpoloz2000";
     private static CreateAndInsert createAndInsert;
     static Connection con;
     Statement st;
@@ -105,10 +101,9 @@ public class CreateAndInsert {
             createStatement();
             bufferReader(filePath);
             String[] passenger;
-            Random random = new Random();
             String line;
             try {
-                int i = 1;
+                long i = 1;
                 while ((line = bufferedReader.readLine()) != null){
                     StringBuilder sb = new StringBuilder("insert into Passengers(passenger_id, namee, phone, country, city) values (");
                     passenger = line.split(",");
@@ -188,13 +183,12 @@ public class CreateAndInsert {
             StringBuilder sb = new StringBuilder("insert into Pass_in_trip(trip_id, passenger_id, datee, place) values(");
             String line;
             try {
+
                 while ((line = bufferedReader.readLine()) != null) {
                     passInT = line.split(",");
                     sb.append(parserToInt(passInT[0]) + "," + parserToInt(passInT[1] + ",'" + passInT[2] + "','" +
                             passInT[3] + "');"));
                     st.executeUpdate(sb.toString());
-                    System.out.println("passinttrip-------------------");
-                    System.out.println(sb.toString());
                     sb.setLength(0);
 
 
@@ -271,7 +265,7 @@ public class CreateAndInsert {
     }
 
     private void createTablePassInTrip() throws SQLException {
-        final String passInTrip = "create table Pass_in_trip(trip_id integer references Trip(trip_id), " +
+        final String passInTrip = "create table Pass_in_trip(trip_id integer  references Trip(trip_id), " +
                 "passenger_id integer references Passengers(passenger_id), datee date not null, place varchar(50) not null )";
         Statement st = con.createStatement();
         st.execute(passInTrip);
@@ -417,7 +411,7 @@ public class CreateAndInsert {
             passService = new PassengerService();
             passService.delete(id);
         }else {
-            System.out.println("Enter id for deleting -> ");
+            System.out.print("Enter id for deleting -> ");
             long id = sc.nextLong();
             tripService = new TripService();
             tripService.delete(id);
