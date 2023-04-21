@@ -24,7 +24,7 @@ import java.util.Set;
 public class CreateAndInsert {
     private static String url = "jdbc:postgresql://localhost:5432/JDBC";
     private static String userName = "postgres";
-    private static String passwd = "manukpoloz2000";
+    private static String passwd = "********";
     private static CreateAndInsert createAndInsert;
     static Connection con;
     Statement st;
@@ -260,7 +260,7 @@ public class CreateAndInsert {
     }
 
     private void createTableTrip() throws SQLException {
-        final String tripName = "create table Trip(trip_id integer primary key, passenger_id integer not null ," +
+        final String tripName = "create table Trip(trip_id integer primary key, passenger_id integer references Passengers(passenger_id)," +
                 " company varchar(50) not null, town_from varchar(50) not null ," +
                 " town_to varchar(50)not null, time_out date not null, time_in date not null );";
 
@@ -271,8 +271,8 @@ public class CreateAndInsert {
     }
 
     private void createTablePassInTrip() throws SQLException {
-        final String passInTrip = "create table Pass_in_trip(trip_id integer not null , " +
-                "passenger_id integer not null , datee date not null, place varchar(50) not null )";
+        final String passInTrip = "create table Pass_in_trip(trip_id integer references Trip(trip_id), " +
+                "passenger_id integer references Passengers(passenger_id), datee date not null, place varchar(50) not null )";
         Statement st = con.createStatement();
         st.execute(passInTrip);
 
