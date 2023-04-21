@@ -7,8 +7,8 @@ public class Company {
     private String name;
     private Date foundDate;
 
-    public void setCompany_id(long company_id) {
-        this.companyId = company_id;
+    public void setCompanyId(long companyId) {
+        this.companyId = companyId;
     }
 
     public long getCompanyId() {

@@ -1,14 +1,14 @@
 package org.example.hibernate_homework.jdbc_homework.airport_management_system;
 
 public class Passengers {
-    private long passenger_id;
+    private long passengerId;
     private String name;
     private String phone;
     private String country;
     private String city;
 
-    public Passengers(long passenger_id, String name, String phone, String country, String city) {
-        this.passenger_id = passenger_id;
+    public Passengers(long passengerId, String name, String phone, String country, String city) {
+        this.passengerId = passengerId;
         this.name = name;
         this.phone = phone;
         this.country = country;
@@ -17,12 +17,12 @@ public class Passengers {
 
     public Passengers(){}
 
-    public void setPassenger_id(long passenger_id) {
-        this.passenger_id = passenger_id;
+    public void setPassenger_id(long passengerId) {
+        this.passengerId = passengerId;
     }
 
     public long getPassenger_id() {
-        return passenger_id;
+        return passengerId;
     }
 
     public void setName(String name) {
@@ -60,7 +60,7 @@ public class Passengers {
     @Override
     public String toString() {
         return "Passengers{" +
-                "passenger_id=" + passenger_id +
+                "passenger_id=" + passengerId +
                 ", name='" + name + '\'' +
                 ", phone='" + phone + '\'' +
                 ", country='" + country + '\'' +

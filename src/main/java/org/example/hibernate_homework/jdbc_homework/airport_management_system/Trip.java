@@ -11,11 +11,11 @@ public class Trip {
     private Timestamp timeOut;
     private Timestamp timeIn;
 
-    public Trip(long company_id, long trip_id, String airplane, String townFrom,
+    public Trip(long companyId, long tripId, String airplane, String townFrom,
                 String townTo, Timestamp timeOut, Timestamp timeIn) {
 
-        this.companyId = company_id;
-        this.tripId = trip_id;
+        this.companyId = companyId;
+        this.tripId = tripId;
         this.airplane = airplane;
         this.townFrom = townFrom;
         this.townTo = townTo;
@@ -25,8 +25,8 @@ public class Trip {
 
     public Trip(){}
 
-    public void setCompanyId(long company_id) {
-        this.companyId = company_id;
+    public void setCompanyId(long companyId) {
+        this.companyId = companyId;
     }
 
     public long getCompanyId() {
@@ -34,7 +34,7 @@ public class Trip {
     }
 
     public void setTripId(long trip_id) {
-        this.tripId = trip_id;
+        this.tripId = tripId;
     }
 
     public long getTripId() {
