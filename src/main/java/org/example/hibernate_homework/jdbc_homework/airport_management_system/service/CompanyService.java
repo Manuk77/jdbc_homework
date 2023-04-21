@@ -27,7 +27,7 @@ public class CompanyService implements Service<Company>{
                st = con.createStatement();
                ResultSet rs = st.executeQuery("select * from Company where company_id = " + id);
                while (rs.next()) {
-                    company.setCompany_id(rs.getLong("company_id"));
+                    company.setCompanyId(rs.getLong("company_id"));
                     company.setName(rs.getString("company_name"));
                     company.setFoundDate(rs.getDate("found_date"));
                }
@@ -133,7 +133,7 @@ public class CompanyService implements Service<Company>{
         if (isNotEmpty(company) && validateId(company_id)) {
             try {
                 st = con.createStatement();
-                pst = con.prepareStatement("update Company set namee = ?, found_date = ? where company_id = ?");
+                pst = con.prepareStatement("update Company set company_name = ?, found_date = ? where company_id = ?");
                 pst.setString(1, company.getName());
                 pst.setDate(2, company.getFoundDate());
                 pst.setLong(3, company_id);
@@ -159,16 +159,6 @@ public class CompanyService implements Service<Company>{
         con = connectToUrl();
         if (validateId(id)){
             try {
-                pst = con.prepareStatement("select count(company_id) from trip where company_id = ?");
-                pst.setLong(1, id);
-                ResultSet rs = pst.executeQuery();
-                int count = 0;
-                if (rs.next())
-                    count = rs.getInt("count");
-                if (count > 0){
-                    System.out.println("can't be removed, first remove company_id from table Trip");
-                    return;
-                }
                 pst = con.prepareStatement("delete from Company where company_id = ?");
                 pst.setLong(1, id);
                 int row = pst.executeUpdate();

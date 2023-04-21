@@ -7,6 +7,7 @@ import org.example.hibernate_homework.jdbc_homework.airport_management_system.Tr
 import org.example.hibernate_homework.jdbc_homework.airport_management_system.create_db_tables.CreateAndInsert;
 
 import java.sql.*;
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -200,7 +201,27 @@ public class PassengerService implements Service<Passengers>, Passenger {
 
     @Override
     public List<? extends Object> getPassengersOfTrip(long tripNumber) {
-        return null;
+        List<Passengers> passenger = new ArrayList<>();
+        try {
+            con = connectToUrl();
+            st = con.createStatement();
+            ResultSet rs = st.executeQuery("select distinct from passenger_id from pass_in_trip where trip_id =" + tripNumber);
+            while (rs.next()) {
+                passenger.add((getById(rs.getLong("passenger_id"))));
+            }
+            rs = null;
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }finally {
+            if (st != null)
+                try {
+                    st.close();
+                }catch (SQLException e) {
+                    System.out.println(e.getMessage());
+                }
+        }
+
+        return passenger;
     }
 
     @Override
