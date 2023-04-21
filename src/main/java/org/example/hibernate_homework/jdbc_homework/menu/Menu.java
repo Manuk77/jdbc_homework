@@ -65,11 +65,11 @@ public class Menu {
                 int update = scInt.nextInt();
                 Scanner scStr = new Scanner(System.in);
                 if (update == 1){
-                    System.out.print("Enter The date m/d/yyyy -> ");
+                    System.out.print("Enter The date yyyy-mm-dd -> ");
                     Date date = Date.valueOf(scStr.nextLine());
                     System.out.print("Enter the airplane name -> ");
                     String airplane = scStr.nextLine();
-                    Company comp = new Company(0,airplane,date);
+                    Company comp = new Company(100,airplane,date);
                     CompanyService companyService = new CompanyService();
                     System.out.print("Enter id for searching -> ");
                     companyService.update(comp, scInt.nextLong());
